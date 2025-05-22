@@ -39,7 +39,8 @@ class ParagraphStylesGota(PydanticBaseModel):
             fontSize=10,
             leading=14,
             textColor=colors.black,
-            alignment=4
+            alignment=4,
+            firstLineIndent=15,
         )
 
     @classmethod
@@ -51,6 +52,17 @@ class ParagraphStylesGota(PydanticBaseModel):
             leading=14,
             textColor=colors.black,
             alignment=0,  # Left alignment
+        )
+
+    @classmethod
+    def normal_center_bold(cls) -> ParagraphStyle:
+        return ParagraphStyle(
+            name='NormalCenterBold',
+            fontName=cls.font_bold_name,
+            fontSize=10,
+            leading=14,
+            textColor=colors.black,
+            alignment=1,  # Center alignment
         )
 
     @classmethod
