@@ -1,18 +1,19 @@
-from dataclasses import dataclass
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm
-from reportlab.platypus import SimpleDocTemplate, Frame, Paragraph
-from reportlab.platypus import Paragraph, Spacer, Image, Table, TableStyle, HRFlowable
-from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.utils import ImageReader
-from reportlab.pdfgen.canvas import Canvas
-from pydantic import BaseModel as PydanticBaseModel
-from pydantic import ConfigDict, field_validator
-from typing import ClassVar
-from copy import deepcopy
 import os
 from abc import ABC, abstractmethod
+from copy import deepcopy
+from dataclasses import dataclass
+from typing import ClassVar
+
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import ConfigDict, field_validator
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import cm
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfgen.canvas import Canvas
+from reportlab.platypus import (Frame, HRFlowable, Image, Paragraph,
+                                SimpleDocTemplate, Spacer, Table, TableStyle)
 
 # Tamanho da página A4
 PAGE_WIDTH, PAGE_HEIGHT = A4
@@ -33,6 +34,7 @@ class _PDFBase(PydanticBaseModel, ABC):
         """
         Estrutura da página com margens e áreas definidas.
         """
+
         pagesize: ClassVar[tuple] = A4
         page_width: ClassVar[float] = PAGE_WIDTH
         page_height: ClassVar[float] = PAGE_HEIGHT
@@ -45,37 +47,45 @@ class _PDFBase(PydanticBaseModel, ABC):
             """
             Estrutura do cabeçalho.
             """
-            image_path: ClassVar[str] = os.path.join(BASE_DIR, "images", "Header_Modificado.png")  # Caminho da imagem do cabeçalho
+
+            image_path: ClassVar[str] = os.path.join(
+                BASE_DIR, "images", "Header_Modificado.png"
+            )  # Caminho da imagem do cabeçalho
             header_height: ClassVar[float] = 4 * cm  # Altura do cabeçalho
 
         class Footer(PydanticBaseModel):
             """
             Estrutura do rodapé.
             """
-            image_path: ClassVar[str] = os.path.join(BASE_DIR, "images", "Footer.jpeg")  # Caminho da imagem do rodapé
+
+            image_path: ClassVar[str] = os.path.join(
+                BASE_DIR, "images", "Footer.jpeg"
+            )  # Caminho da imagem do rodapé
             footer_height: ClassVar[float] = 4 * cm  # Altura do rodapé
 
         @staticmethod
         def _validate_image_path(value: str) -> str:
             if not os.path.exists(value):
                 print(f"Imagem não encontrada: {value}")
-                raise FileNotFoundError(f"A imagem não existe no caminho especificado: {value}")
+                raise FileNotFoundError(
+                    f"A imagem não existe no caminho especificado: {value}"
+                )
             return value
 
         @classmethod
         def _generate_header(cls, canvas: Canvas):
             header_image = ImageReader(cls.Header.image_path)
             img_width, img_height = header_image.getSize()
-            
+
             aspect = img_height / float(img_width)
             display_width = cls.page_width
             display_height = display_width * aspect
-            
+
             # Se ultrapassar a altura máxima desejada, redimensiona
             if display_height > cls.Header.header_height:
                 display_height = cls.Header.header_height
                 display_width = display_height / aspect
-        
+
             x = 0  # Sem margens laterais
             y = PAGE_HEIGHT - display_height  # No topo da página
 
@@ -90,7 +100,7 @@ class _PDFBase(PydanticBaseModel, ABC):
             )
 
         @classmethod
-        def generate_header(cls, canvas: Canvas, doc: SimpleDocTemplate=None):
+        def generate_header(cls, canvas: Canvas, doc: SimpleDocTemplate = None):
             """
             Desenha a imagem do cabeçalho centralizada horizontalmente,
             ocupando toda a altura do cabeçalho proporcionalmente.
@@ -105,7 +115,7 @@ class _PDFBase(PydanticBaseModel, ABC):
         def _generate_footer(cls, canvas: Canvas):
             footer_image = ImageReader(cls.Footer.image_path)
             img_width, img_height = footer_image.getSize()
-            
+
             aspect = img_height / float(img_width)
 
             # Definir margens
@@ -136,7 +146,7 @@ class _PDFBase(PydanticBaseModel, ABC):
             )
 
         @classmethod
-        def generate_footer(cls, canvas: Canvas, doc: SimpleDocTemplate=None):
+        def generate_footer(cls, canvas: Canvas, doc: SimpleDocTemplate = None):
             """
             Desenha o rodapé na parte inferior da página.
             """
@@ -147,7 +157,7 @@ class _PDFBase(PydanticBaseModel, ABC):
                 print(f"Erro ao gerar o Footer: {error}")
 
         @classmethod
-        def add_header_and_footer(cls, canvas: Canvas, doc: SimpleDocTemplate=None):
+        def add_header_and_footer(cls, canvas: Canvas, doc: SimpleDocTemplate = None):
             """
             Adiciona o cabeçalho e rodapé ao documento.
             """
@@ -201,7 +211,8 @@ class _PDFBase(PydanticBaseModel, ABC):
             onFirstPage=self.PageBase.add_header_and_footer,
             onLaterPages=self.PageBase.add_header_and_footer,
         )
-        
+
+
 if __name__ == "__main__":
     pdf = _PDFBase()
     pdf.generate_pdf("output.pdf")

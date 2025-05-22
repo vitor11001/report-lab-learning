@@ -1,18 +1,19 @@
+from typing import ClassVar
+
+from pydantic import BaseModel as PydanticBaseModel
+from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph
-from reportlab.lib import colors
-from typing import ClassVar
-from pydantic import BaseModel as PydanticBaseModel
 
 
 class ParagraphStylesGota(PydanticBaseModel):
     font_name: ClassVar[str] = "Helvetica"
     font_bold_name: ClassVar[str] = "Helvetica-Bold"
-    
+
     @classmethod
     def normal_left(cls) -> ParagraphStyle:
         return ParagraphStyle(
-            name='NormalLeft',
+            name="NormalLeft",
             fontName=cls.font_name,
             fontSize=10,
             leading=14,
@@ -23,18 +24,18 @@ class ParagraphStylesGota(PydanticBaseModel):
     @classmethod
     def normal_right(cls) -> ParagraphStyle:
         return ParagraphStyle(
-            name='NormalRight',
+            name="NormalRight",
             fontName=cls.font_name,
             fontSize=10,
             leading=14,
             textColor=colors.black,
-            alignment=2  # Right alignment
+            alignment=2,  # Right alignment
         )
-        
+
     @classmethod
     def normal_adjusted(cls) -> ParagraphStyle:
         return ParagraphStyle(
-            name='NormalAdjusted',
+            name="NormalAdjusted",
             fontName=cls.font_name,
             fontSize=10,
             leading=14,
@@ -46,7 +47,7 @@ class ParagraphStylesGota(PydanticBaseModel):
     @classmethod
     def normal_left_bold(cls) -> ParagraphStyle:
         return ParagraphStyle(
-            name='NormalLeftBold',
+            name="NormalLeftBold",
             fontName=cls.font_bold_name,
             fontSize=10,
             leading=14,
@@ -57,7 +58,7 @@ class ParagraphStylesGota(PydanticBaseModel):
     @classmethod
     def normal_center_bold(cls) -> ParagraphStyle:
         return ParagraphStyle(
-            name='NormalCenterBold',
+            name="NormalCenterBold",
             fontName=cls.font_bold_name,
             fontSize=10,
             leading=14,
@@ -68,12 +69,12 @@ class ParagraphStylesGota(PydanticBaseModel):
     @classmethod
     def title(cls) -> ParagraphStyle:
         return ParagraphStyle(
-            name='Title',
+            name="Title",
             fontName=cls.font_bold_name,
             fontSize=18,
             leading=22,
             textColor=colors.black,
-            alignment=1  # Center alignment
+            alignment=1,  # Center alignment
         )
 
     @classmethod
